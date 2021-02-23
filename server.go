@@ -1,30 +1,36 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"grpc/hello"
 	"log"
 	"net"
 
-	"github.com/mrspp/grpc/chat"
 	"google.golang.org/grpc"
 )
 
+type server struct {
+}
+
+func (s *server) Hello(ctx context.Context, request *hello.HelloRequest) (*hello.HelloResponse, error) {
+	name := request.Name
+	response := &hello.HelloResponse{
+		Greeting: "Hello " + name,
+	}
+	return response, nil
+}
+
 func main() {
+	address := "localhost: 9000"
 
-	fmt.Println("Go gRPC Beginners Tutorial!")
-
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 9000))
+	lis, err := net.Listen("tcp", ":9000")
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatalf("Error %v", err)
 	}
+	fmt.Printf("Server is listening on %v ...", address)
 
-	s := chat.Server{}
-
-	grpcServer := grpc.NewServer()
-
-	chat.RegisterChatServiceServer(grpcServer, &s)
-
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %s", err)
-	}
+	s := grpc.NewServer()
+	hello.RegisterHelloServiceServer(s, &server{})
+	s.Serve(lis)
 }
