@@ -3,7 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"grpc/hello"
+	"grpc/service/hello"
+
 	"log"
 
 	"google.golang.org/grpc"
