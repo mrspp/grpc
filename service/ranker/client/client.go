@@ -20,7 +20,7 @@ func main() {
 	defer clientConn.Close()
 
 	client := rank.NewRankServiceClient(clientConn)
-	request := &rank.RankRequest{Index: 1, ProductName: "suha", Rating: 4}
+	request := &rank.RankRequest{Index: "1", ProductName: "suha", Rating: "4"}
 
 	resp, _ := client.RankService(context.Background(), request)
 

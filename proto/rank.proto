@@ -5,9 +5,9 @@ package rank;
 option go_package = "proto;rank";
 
 message rankRequest {
-    int32 index = 1;
+    string index = 1;
     string productName = 2;
-    int32 rating = 3;
+    string rating = 3;
 }
 
 message rankResponse {
