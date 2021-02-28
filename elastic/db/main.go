@@ -1,10 +1,17 @@
 package main
 
 import (
+	"bytes"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"strconv"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gojektech/heimdall/httpclient"
 )
 
 //Item ...
@@ -88,9 +95,24 @@ func main() {
 
 	}
 	var url string
+	var elasticHostname string = "10.8.13.61:9200"
+	var elasticsearchIndexName string = "products"
+	timeout := 1000 * time.Millisecond
+	client := httpclient.NewClient(httpclient.WithHTTPTimeout(timeout))
+	headers := http.Header{}
+	headers.Set("Content-Type", "application/json")
+
 	for i := 0; i < len(ItemArr); i++ {
-		url = "http://10.8.13.61:9200/company/_doc/" + string(ItemArr[i].ID)
+		payloadByte, _ := json.Marshal(ItemArr[0])
+		payload := bytes.NewReader(payloadByte)
+
+		ID := ItemArr[i].ID
+		IDstring := strconv.FormatInt(ID, 10)
+		url = "http://" + elasticHostname + "/" + elasticsearchIndexName + "/_doc/" + IDstring
+
+		res, _ := client.Put(url, payload, headers)
+		body, _ := ioutil.ReadAll(res.Body)
+		fmt.Println(string(body))
 	}
-	//res, err := http.NewRequest("PUT", URL, )
-	fmt.Println(url)
+
 }

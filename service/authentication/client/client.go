@@ -27,4 +27,5 @@ func main() {
 	resp, _ := client.Auth(context.Background(), request)
 
 	fmt.Printf("Receive response => [%v, %v]", resp.Mes, resp.Token)
+
 }
